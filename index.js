@@ -5,8 +5,8 @@ window.onload = function() {
 
 	let showSprings = true;
 	let m = 1;
-	let k = 10;
-	let damping = 1.2;
+	let k = 20;
+	let damping = 0.3;
 
 	let timestep = 0.1;
 
@@ -36,10 +36,10 @@ window.onload = function() {
 	// points
 	let points = [];
 	//createPolygonPoints(400, 300, 100, 10);
-	//createSquarePoints(300, 300, 7, 50);
-	createRandomPoints(400, 300, 150, 150, 30);
-	let minLength = 99;
-	let maxLength = 101;
+	createSquarePoints(300, 300, 7, 50);
+	//createRandomPoints(400, 300, 150, 150, 30);
+	let minLength = 49;
+	let maxLength = 51;
 
 	function createRandomPoints(x, y, w, h, count) {
 
@@ -92,12 +92,22 @@ window.onload = function() {
 	createSprings(maxLength, minLength);
 
 	// create springs from center to all points
-	function createSprings() {
+	function createSprings(maxLength, minLength) {
 
 		let anchorPoint = points.find(p => p.isAnchor);
 
 		for (let i = 0; i < points.length; i++) {
-			springs.push(new Spring(anchorPoint, points[i]));
+			for (let j = 0; j < points.length; j++) {
+
+				if (i != j) {
+					let dx = Math.abs(points[i].x - points[j].x);
+					let dy = Math.abs(points[i].y - points[j].y);
+					let d = Math.sqrt(dx**2 + dy**2);
+					if (d <= maxLength && d >= minLength) {
+						springs.push(new Spring(points[i], points[j]));
+					}
+				}
+			}
 		}
 
 	}
@@ -169,8 +179,8 @@ window.onload = function() {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 		if (isAnchorSelected) {
-			points[0].x -= 6;
-			points[0].y -= 6;
+			//points[0].x -= 6;
+			//points[0].y -= 6;
 		}
 
 		for (let i = 0; i < points.length; i++) {
@@ -203,13 +213,13 @@ window.onload = function() {
 
 	function onMouseMove(e) {
 		if (isAnchorSelected) {
-			/*
+			
 			let mouseX = e.clientX - canvas.offsetLeft;
 			let mouseY = e.clientY - canvas.offsetTop;
 
 			points[0].x = mouseX;
 			points[0].y = mouseY;
-			*/
+			
 		}
 	}
 
